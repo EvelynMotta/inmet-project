@@ -1,4 +1,4 @@
-from registro import RegistroMeteorologico
+from .registro import RegistroMeteorologico
 
 class Estatistica:
     def __init__(self, registros: list[RegistroMeteorologico]):

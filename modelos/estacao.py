@@ -1,4 +1,4 @@
-from registro import RegistroMeteorologico
+from .registro import RegistroMeteorologico
 
 class EstacaoMeteorologica:
     def __init__(self, nome: str, codigo: str, regiao: str, uf: str, latitude: float, longitude: float, altitude: float, registros: list[RegistroMeteorologico]):

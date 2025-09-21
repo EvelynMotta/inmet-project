@@ -20,14 +20,19 @@ class Leitor:
             subpasta = Path(f"{self.__pasta}/{ano}/")
             arquivos = subpasta.glob("*.csv")
             estacoes: list[EstacaoMeteorologica] = []
+            nenhum_arquivo_encontrado = True
 
             print(f"Lendo pasta de {ano}...")
             for arquivo in arquivos:
+                nenhum_arquivo_encontrado = False
                 estacao = self.__processar_estacao(arquivo)
+                if not estacao:
+                    print(f"-- Estação inválida no arquivo '{arquivo.name}'")
+                    continue
                 estacoes.append(estacao)
                 self.__estacoes_lidas.add(estacao.nome)
 
-            if len(estacoes) == 0:
+            if nenhum_arquivo_encontrado:
                 print(f"-- Nenhum CSV encontrado para o ano de {ano}.\n")
                 continue
             dados[ano] = estacoes
@@ -39,7 +44,7 @@ class Leitor:
     def estacoes_lidas(self) -> set[str]:
         return self.__estacoes_lidas
 
-    def __processar_estacao(self, arquivo) -> EstacaoMeteorologica:
+    def __processar_estacao(self, arquivo) -> EstacaoMeteorologica | None:
         with arquivo.open() as arq:
             leitor = csv.reader(arq, delimiter=";")
             registros: list[RegistroMeteorologico] = []
@@ -53,6 +58,8 @@ class Leitor:
                     self.__verificar_cabecalho(cont_linha, linha, dados_estacao)
                 if cont_linha == 8:
                     break
+            if not dados_estacao.get('estacao'):
+                return None
 
             print(f"-- Lendo registros da estação {dados_estacao['estacao']}.")
             for linha in leitor:
@@ -60,10 +67,10 @@ class Leitor:
                 registros.append(registro)
 
             estacao = EstacaoMeteorologica(
-                dados_estacao['estacao'], dados_estacao['codigo'],
-                dados_estacao['regiao'], dados_estacao['uf'],
-                dados_estacao['latitude'], dados_estacao['longitude'],
-                dados_estacao['altitude'], registros
+                dados_estacao.get('estacao'), dados_estacao.get('codigo'),
+                dados_estacao.get('regiao'), dados_estacao.get('uf'),
+                dados_estacao.get('latitude'), dados_estacao.get('longitude'),
+                dados_estacao.get('altitude'), registros
             )
             return estacao
 

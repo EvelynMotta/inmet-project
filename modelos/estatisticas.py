@@ -23,6 +23,8 @@ class Estatistica:
         quantidade_temperaturas: int = 0
 
         for registro in self.__registros:
+            if not registro.temperatura:
+                continue
             soma += registro.temperatura
             quantidade_temperaturas += 1
 
@@ -31,11 +33,11 @@ class Estatistica:
 
     def max_umidade(self) -> float:
         """Seleciona a maior umidade encontrada nos registros."""
-        maior_registro = max(self.registros, key=lambda registro: registro.umidade)
+        maior_registro = max(self.registros, key=lambda registro: registro.umidade or float("-inf"))
         return maior_registro.umidade
 
 
     def total_precipitacao(self) -> float:
         """Faz a soma da precipitação de todos os registros."""
-        total = sum(registro.precipitacao for registro in self.registros)
+        total = sum(registro.precipitacao for registro in self.registros if registro.precipitacao)
         return total

@@ -83,10 +83,14 @@ class Leitor:
         umidade: float | None
 
         # Validando o formato da data
-        try:
-            data = datetime.strptime(valores[0], "%Y/%m/%d").date()
-        except ValueError:
-            data = None
+        for formato in ("%Y/%m/%d", "%d/%m/%Y"):
+            try:
+                data = datetime.strptime(valores[0], formato).date()
+                break
+            except ValueError:
+                data = None
+                continue
+
 
         # Validando o formato da hora
         try:
@@ -96,19 +100,19 @@ class Leitor:
 
         # Validando a temperatura
         try:
-            temperatura = float(valores[7])
+            temperatura = float(valores[7].replace(",", "."))
         except ValueError:
             temperatura = None
 
         # Validando a precipitacao
         try:
-            precipitacao = float(valores[2])
+            precipitacao = float(valores[2].replace(",", "."))
         except ValueError:
             precipitacao = None
 
         # Validando a umidade
         try:
-            umidade = float(valores[14])
+            umidade = float(valores[14].replace(",", "."))
         except ValueError:
             umidade = None
 
